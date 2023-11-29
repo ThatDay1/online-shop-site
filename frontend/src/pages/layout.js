@@ -1,6 +1,10 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 
 const LayoutComponent = () => {
+    const navigate = useNavigate();
+    const logout = () => {
+        navigate("/login");
+    }
     return (
         <>
             <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -14,17 +18,17 @@ const LayoutComponent = () => {
                             <li className="nav-item">
                                 <Link to="/">Home</Link>
                             </li>    
-                            <li className="nav-item">
+                            <li className="nav-item mx-2">
                                 <Link to="/products">Products</Link>
                             </li>
-                            <li className="nav-item">
+                            <li className="nav-item mx-2">
                                 <Link to="/orders">Orders</Link>
                             </li>    
-                            <li className="nav-item">
+                            <li className="nav-item mx-2">
                                 <Link to="/baskets">Basket</Link>
                             </li>                   
                         </ul>
-                        <button className="btn btn-outline-success" type="submit">Exit</button>
+                        <button onClick={logout} className="btn btn-outline-danger" type="submit">Exit</button>
                     </div>
                 </div>
             </nav>
