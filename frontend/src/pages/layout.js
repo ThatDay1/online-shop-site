@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
 
 const LayoutComponent = () => {
@@ -5,6 +6,13 @@ const LayoutComponent = () => {
     const logout = () => {
         navigate("/login");
     }
+
+    useEffect(() => {
+        if (!localStorage.getItem("token")) {
+            navigate("/login");
+        }
+    })
+
     return (
         <>
             <nav className="navbar navbar-expand-lg bg-body-tertiary">

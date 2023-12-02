@@ -1,12 +1,23 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const LoginComponent = () => {
+    const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const login = (e) => {
+    const login = async (e) => {
         e.preventDefault();
+        try {
+            let model = {email: email, password: password};
+            let response = await axios.post("http://localhost:5000/auth/login", model);
+            localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            navigate("/");
+        } catch (error) {
+            console.error(error);
+        }
         console.log(email, password);
     }
 
