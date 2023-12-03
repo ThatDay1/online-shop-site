@@ -96,6 +96,15 @@ app.post("/auth/login", async (req, res) => {
     }
 });
 
+app.get("/products", async (req, res) => {
+    try {
+        const products = await Product.find({}).sort({name: 1});
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+})
+
 //console.log(uuidv4());
 
 const port = 5000;
