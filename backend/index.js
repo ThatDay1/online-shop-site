@@ -30,7 +30,8 @@ const productSchema = new mongoose.Schema({
     name: String,
     stock: Number,
     price: Number,
-    imageUrl: String
+    imageUrl: String,
+    categoryName: String
 });
 
 const Product = mongoose.model("Product", productSchema);
@@ -106,6 +107,45 @@ app.get("/products", async (req, res) => {
 })
 
 //console.log(uuidv4());
+
+const storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, "uploads/")
+    },
+    filename: function(req, file, cb) {
+        cb(null, Date.now() + "-" + file.originalname)
+    }
+});
+
+const upload = multer({storage: storage});
+
+app.post("/products/add", upload.single("image"), async (req, res) => {
+    try {
+        const {name, categoryName, stock, price} = req.body;
+        const product = new Product({
+            _id: uuidv4(),
+            name: name,
+            stock: stock,price: price,
+            categoryName: categoryName,
+            imageUrl: req.file.path
+        });
+
+        await product.save();
+        res.json({message: "Product save is completed!"});
+    } catch (error) {
+        res.status(500).json({message: error.message})
+    }
+});
+
+app.post("/products/remove", async (req, res) => {
+    try {
+        const {_id} = req.body;
+        await Product.findByIdAndRemove(_id);
+        res.json({message: "deleted succesfully!"});
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+})
 
 const port = 5000;
 app.listen(5000, () => {
