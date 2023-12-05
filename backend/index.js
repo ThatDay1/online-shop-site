@@ -5,9 +5,11 @@ const {v4:uuidv4} = require("uuid");
 const multer = require("multer");
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
+const path = require("path");
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const uri = "mongodb+srv://MongoDb:1@reacteticaretdb.nao7bcj.mongodb.net/?retryWrites=true&w=majority"
 mongoose.connect(uri).then(res => {
