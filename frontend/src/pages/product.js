@@ -3,6 +3,10 @@ import axios from 'axios';
 
 const ProductComponent = () => {
     const [products, setProducts] = useState([]);
+    const [name, setName] = useState("");
+    const [categoryName, setCategoryName] = useState("");
+    const [price, setPrice] = useState("0");
+    const [stock, setStock] = useState("0");
 
     const getAll = async () => {
         const response = await axios.get("http://localhost:5000/products");
@@ -14,25 +18,57 @@ const ProductComponent = () => {
     }, [])
 
     const remove = async (_id) => {
-        let model = { _id: _id };
-        let response = await axios.post("http://localhost:5000/products/remove", model);
+        let confirm = window.confirm("Do you want to delete the product?");
+        if (confirm) {
+            let model = { _id: _id };
+            let response = await axios.post("http://localhost:5000/products/remove", model);
+            alert(response.data.message);
+            await getAll();
+        }
+    }
+
+    const add = async (e) => {
+        e.preventDefault();
+        //console.log(image);
+        var input = document.querySelector("input[type='file']");
+        //console.log(input.files[0]);
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("categoryName", categoryName);
+        formData.append("stock", stock);
+        formData.append("price", price);
+        formData.append("image", input.files[0], input.files[0].name);
+
+        var response = await axios.post("http://localhost:5000/products/add", formData);
+
         alert(response.data.message);
-        await getAll();
+
+        getAll();
+
+        let element = document.getElementById("addModelCloseBtn");
+        element.click();
+
+        setName("");
+        setPrice(0);
+        setStock(0);
+        setCategoryName(0);
+        input.value = "";
+
     }
 
     return (
         <>
-            <div className="container mt-4">
-                <div className="card">
-                    <div className="card-header">
+            <div classNameName="container mt-4">
+                <div classNameName="card">
+                    <div classNameName="card-header">
                         <h1>Product List</h1>
                     </div>
-                    <div className="card-body">
-                        <div className="form-group">
-                            <button data-bs-toggle="modal" data-bs-target="#addModal" className='btn btn-outline-primary'>
+                    <div classNameName="card-body">
+                        <div classNameName="form-group">
+                            <button data-bs-toggle="modal" data-bs-target="#addModal" classNameName='btn btn-outline-primary'>
                                 Add
                             </button>
-                            <table className="table table-bordered table-hover mt-2">
+                            <table classNameName="table table-bordered table-hover mt-2">
                                 <thead>
                                     <tr>
                                         <th>#</th>
@@ -56,7 +92,7 @@ const ProductComponent = () => {
                                             <td>{products.stock}</td>
                                             <td>{products.price}</td>
                                             <td>
-                                                <button onClick={() => remove(product._id)} className='btn btn-outline-danger btn-sm'>Delete</button>
+                                                <button onClick={() => remove(product._id)} classNameName='btn btn-outline-danger btn-sm'>Delete</button>
                                             </td>
                                         </tr>
                                     ))}
@@ -67,22 +103,46 @@ const ProductComponent = () => {
                 </div>
             </div>
 
-            <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialocentered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="addModalLabel">Add Product</h1>
-                            <button type="button" class="btn-close" id='addModelCloseBtn' data-bs-dismiss="modal" aria-label="Close"></button>
+            <div className="modal fade" id="addModal" tabIndex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialocentered">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="addModalLabel">Add Product</h1>
+                            <button type="button" className="btn-close" id='addModelCloseBtn' data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
-                            <div className='form-group'>
-
+                        <form onSubmit={add}>
+                            <div className="modal-body">
+                                <div classNameName='form-group'>
+                                    <label htmlFor='name'>Product Name</label>
+                                    <input classNameName='form-control' value={name} onChange={(e) => setName(e.target.value)} id='name' name='name' />
+                                </div>
+                                <div classNameName='form-group'>
+                                    <select className='form-control' value={categoryName} onChange={(e) => setCategoryName(e.target.value)} >
+                                        <option value="0">Choose...</option>
+                                        <option>Vegetable</option>
+                                        <option>Fruit</option>
+                                        <option>Technology</option>
+                                        <option>Others</option>
+                                    </select>
+                                </div>
+                                <div classNameName='form-group mt-2'>
+                                    <label htmlFor='stock'>Stock Quantity</label>
+                                    <input classNameName='form-control' value={stock} onChange={(e) => setStock(e.target.value)} id='stock' name='stock' />
+                                </div>
+                                <div classNameName='form-group mt-2'>
+                                    <label htmlFor='price'>Unit Price</label>
+                                    <input classNameName='form-control' value={price} onChange={(e) => setPrice(e.target.value)} id='price' name='price' />
+                                </div>
+                                <div classNameName='form-group mt-2'>
+                                    <label htmlFor='image'>İmage</label>
+                                    <input classNameName='form-control' type='file' id='image' name='image' />
+                                </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Save changes</button>
-                        </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" className="btn btn-primary">Save changes</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
