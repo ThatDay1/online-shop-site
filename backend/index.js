@@ -22,7 +22,8 @@ const userSchema = new mongoose.Schema({
     _id: String,
     name: String,
     email: String,
-    password: String
+    password: String,
+    isAmin: Boolean
 });
 
 const User = mongoose.model("User", userSchema);
@@ -68,7 +69,8 @@ app.post("/auth/register", async (req, res) => {
             _id: uuidv4(),
             name: name,
             email: email,
-            password: password
+            password: password,
+            isAdmin: false
         });
         await user.save();
         const payload = {

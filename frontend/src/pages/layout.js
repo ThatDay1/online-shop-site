@@ -3,6 +3,7 @@ import { Outlet, Link, useNavigate } from "react-router-dom";
 
 const LayoutComponent = () => {
     const navigate = useNavigate();
+    let isAdmin = flase;
     const logout = () => {
         navigate("/login");
     }
@@ -11,7 +12,14 @@ const LayoutComponent = () => {
         if (!localStorage.getItem("token")) {
             navigate("/login");
         }
-    })
+    });
+
+    const checkIsAdmin = () => {
+        let user = JSON.parse(localStorage.getItem("user"));
+        isAdmin = user.isAdmin;
+    }
+
+    checkIsAdmin();
 
     return (
         <>
@@ -25,22 +33,25 @@ const LayoutComponent = () => {
                         <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                             <li className="nav-item">
                                 <Link to="/">Home</Link>
-                            </li>    
-                            <li className="nav-item mx-2">
-                                <Link to="/products">Products</Link>
                             </li>
+                            {
+                                isAdmin &&
+                                <li className="nav-item mx-2">
+                                    <Link to="/products">Products</Link>
+                                </li>
+                            }
                             <li className="nav-item mx-2">
                                 <Link to="/orders">Orders</Link>
-                            </li>    
+                            </li>
                             <li className="nav-item mx-2">
                                 <Link to="/baskets">Basket</Link>
-                            </li>                   
+                            </li>
                         </ul>
                         <button onClick={logout} className="btn btn-outline-danger" type="submit">Exit</button>
                     </div>
                 </div>
             </nav>
-            <Outlet/>
+            <Outlet />
         </>
     )
 }
