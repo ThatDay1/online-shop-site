@@ -194,6 +194,20 @@ app.post("/baskets/getAll", async(req, res) => {
     }
 })
 
+app.post("/baskets/remove", async(req, res) => {
+    try {
+        const {_id} = req.body;
+        const basket = await Basket.findById(_id);
+        const product = await Product.findById(basket.productId);
+        product.stock += 1;
+        await Product.findByIdAndUpdate(product._id, product);
+        await Basket.findByIdAndRemove(_id);
+        res.json({message: "Deleted succesfully"});
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+})
+
 const port = 5000;
 app.listen(5000, () => {
     console.log("Aplication http://localhost: " + port + " starting");

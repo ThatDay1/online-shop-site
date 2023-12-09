@@ -20,11 +20,20 @@ const BasketComponent = () => {
         //console.log(totalC);
     }
 
+    const remove = async (_id) => {
+        let confirm = window.confirm("Do you want to delete this product from your card");
+        if (confirm) {
+            let model = {_id: _id};
+            await axios.post("http://localhost:5000/baskets/remove", model);
+            getAll();
+        }
+    }
+
 
     useEffect(() => {
         getAll();
         calc();
-    }, [])
+    }, [total])
 
     return (
         <>
@@ -58,7 +67,7 @@ const BasketComponent = () => {
                                                 <td>1</td>
                                                 <td>{basket.products[0].price}</td>
                                                 <td>
-                                                    <button className='btn btn-outline-danger btn-sm'>Delete</button>
+                                                    <button onClick={() => remove(basket._id)} className='btn btn-outline-danger btn-sm'>Delete</button>
                                                 </td>
                                             </tr>
                                         ))}
