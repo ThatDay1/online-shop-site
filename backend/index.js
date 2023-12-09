@@ -42,8 +42,7 @@ const Product = mongoose.model("Product", productSchema);
 const basketSchema = new mongoose.Schema({
     _id: String,
     productId: String,
-    userId: Number,
-    price: Number
+    userId: String
 });
 
 const Basket = mongoose.model("Basket", basketSchema);
@@ -150,6 +149,27 @@ app.post("/products/remove", async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 })
+
+app.post("/baskets/add", async (req,res) => {
+    try {
+        const {productId, userId} = req.body;
+        let basket = new Basket({
+            _id: uuidv4(),
+            userId: userId,
+            productId: productId
+
+        });
+        await basket.save();
+
+        let product = await Product.findById(productId);
+        product.stock = product.stock - 1;
+        await Pruduct.findByIdAndUpdate(productId, product);
+
+        res.json({message: "Product added to the chart."});
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+});
 
 const port = 5000;
 app.listen(5000, () => {
