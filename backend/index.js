@@ -50,8 +50,7 @@ const Basket = mongoose.model("Basket", basketSchema);
 const orderSchema = new mongoose.Schema({
     _id: String,
     productId: String,
-    userId: Number,
-    price: Number
+    userId: String
 });
 
 const Order = mongoose.model("Order", orderSchema);
@@ -203,6 +202,23 @@ app.post("/baskets/remove", async(req, res) => {
         await Product.findByIdAndUpdate(product._id, product);
         await Basket.findByIdAndRemove(_id);
         res.json({message: "Deleted succesfully"});
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+})
+app.post("/orders/add", async (req, res) => {
+    try {
+        const {userId} = req.body;
+        const baskets = await Basket.find({userId: userId});
+        for (const basket of baskets) {
+            let order = new Order({
+                _id: uuidv4(),
+                productId: basket.productId,
+                userId: userId
+            });
+            order.save();
+            await Basket.findByIdAndRemove(basket._id);
+        }
     } catch (error) {
         res.status(500).json({message: error.message});
     }

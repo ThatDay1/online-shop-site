@@ -29,11 +29,17 @@ const BasketComponent = () => {
         }
     }
 
+    const addOrder = async () => {
+        let user = JSON.parse(localStorage.getItem("user"));
+        let model = {userId: user._id};
+        await axios.post("http://localhost:5000/orders/add", model);
+        getAll();
+    }
+
 
     useEffect(() => {
         getAll();
-        calc();
-    }, [total])
+    })
 
     return (
         <>
@@ -82,7 +88,7 @@ const BasketComponent = () => {
                                         <h5 className='text-center'>Sum of Product Quantity: {baskets.length}</h5>
                                         <h5 className='alert alert-danger text-center'>Sum of Price: {total}</h5>
                                         <hr />
-                                        <button className='btn btn-outline-danger w-100'>Payment</button>
+                                        <button type='button' onClick={addOrder} className='btn btn-outline-danger w-100'>Payment</button>
                                     </div>
                                 </div>
                             </div>
