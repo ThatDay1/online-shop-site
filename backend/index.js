@@ -224,6 +224,29 @@ app.post("/orders/add", async (req, res) => {
     }
 })
 
+app.post("/orders", async(req, res) => {
+    try {
+        const {userId} = req.body;
+        const orders = await Order.aggregate([
+            {
+                $math: {userId: userId}
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "productId",
+                    foreignField: "_id",
+                    as: "products"
+                }
+            }
+        ]);
+
+        res.json(orders);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+})
+
 const port = 5000;
 app.listen(5000, () => {
     console.log("Aplication http://localhost: " + port + " starting");
